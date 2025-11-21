@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "488544937930",
+    "project_id": "fatora-6859a",
+    "storage_bucket": "fatora-6859a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:488544937930:android:2e65457e2509457d785133",
+        "android_client_info": {
+          "package_name": "com.example.fatora"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "488544937930-s3fni2hdu3388h56p63085ec3m2pp06g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.fatora",
+            "certificate_hash": "d9d2f5768cb48d857e136befe7d31848c4616415"
+          }
+        },
+        {
+          "client_id": "488544937930-odcq1aqlf0rcedd327raue3cfvij9k80.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiNGT1wgA2YMzuB5qaAPhS3d9pMz0BR0s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "488544937930-odcq1aqlf0rcedd327raue3cfvij9k80.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "488544937930-f0qp2h8m0oh5jeumbr1fvo7qtb0mq52q.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.fatora"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
