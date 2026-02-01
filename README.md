@@ -1,98 +1,107 @@
-# Fatora - Debt Management Application
+# Fatora
 
-Fatora is a comprehensive Flutter-based application designed to help users efficiently manage debts, debtors, and payments. It provides a user-friendly interface for tracking financial transactions, offering detailed insights through statistics and a dashboard.
+Fatora is a comprehensive Flutter application designed for personal finance management, specifically focused on tracking debts and payments. It allows users to manage debtor profiles, record detailed debt transactions, track payments, and visualize financial statistics through an intuitive dashboard.
 
-## Project Overview
+## 🚀 Features
 
-The primary goal of Fatora is to simplify the process of recording and monitoring debts. Users can easily add debtors, log specific debts and payments, and view the financial status of each contact. The app leverages Firebase for secure data storage and authentication, ensuring data persistence and accessibility across devices.
+### Debtor Management
+*   **Create & Manage Profiles:** Add, edit, and delete debtor information including name, phone number, email, and notes.
+*   **Search & Filter:** Efficiently search for debtors by name or phone number and filter lists based on debt status.
+*   **Detailed Views:** View comprehensive history of debts and payments for each debtor.
 
-## Project Structure
+### Financial Tracking
+*   **Debt Recording:** Add detailed debt records including specific items, quantities, and prices.
+*   **Payment Processing:** Record full or partial payments with support for multiple payment methods (Cash, Bank Transfer, Check, etc.).
+*   **Transaction History:** View chronological lists of all debts and payments.
+*   **Status Tracking:** Mark debts as paid/unpaid and track outstanding balances.
 
-The project follows a standard Flutter architecture with a separation of concerns between UI, business logic, and data services.
+### Dashboard & Analytics
+*   **Real-time Overview:** Instant view of total debtors, active debtors, total outstanding debt, and total amounts paid.
+*   **Visualizations:** Interactive charts (via `fl_chart`) displaying debt distribution and payment trends.
+*   **Key Performance Indicators:** Metrics such as average debt per debtor and overall payment rates.
 
-*   **`lib/main.dart`**: The application entry point. It initializes Firebase, configures the theme and locale providers, and sets up the root widget.
-*   **`lib/screens/`**: Contains the user interface (UI) code for various screens, including:
-    *   **Authentication**: `auth_screen.dart`, `auth_wrapper.dart`
-    *   **Dashboard**: `dashboard_page.dart`
-    *   **Debtor Management**: `debtors_list_screen.dart`, `add_edit_debtor_screen.dart`, `debtor_details_screen.dart`
-    *   **Transaction Management**: `add_edit_debt_screen.dart`, `add_edit_payment_screen.dart`, `debt_details_screen.dart`
-    *   **Analysis & Config**: `statistics_screen.dart`, `settings_screen.dart`
-*   **`lib/models/`**: Defines the data structures for the application:
-    *   `debtor_model.dart`
-    *   `debts_model.dart`
-    *   `payment_model.dart`
-*   **`lib/firestore_services/`**: Handles all interactions with Firebase Firestore:
-    *   `auth_service.dart`: Manages user authentication.
-    *   `debtor_services.dart`, `debts_services.dart`, `payment_services.dart`: CRUD operations for their respective data models.
-*   **`lib/providers/`**: Implements state management using the Provider package (e.g., `theme_provider.dart`, `locale_provider.dart`, `debtor_provider.dart`).
-*   **`lib/custom_widgets/`**: Reusable UI components like `stat_card.dart`, `transaction_tile.dart`, and `quick_action_button.dart`.
-*   **`lib/l10n/`**: Localization files (`.arb`) for English and Arabic support.
+### User Experience
+*   **Authentication:** Secure Google Sign-In integration via Firebase Authentication.
+*   **Localization:** Complete support for **English** and **Arabic** languages.
+*   **Theming:** toggleable **Light** and **Dark** modes with a modern Material Design 3 UI.
+*   **Offline Support:** Implements local caching strategies (LRU Cache) to optimize performance and reduce database reads.
 
-## Technologies & Dependencies
+## 🛠️ Tech Stack
 
-Fatora is built using the following technologies:
+*   **Framework:** [Flutter](https://flutter.dev/) (Dart)
+*   **Backend:** [Firebase](https://firebase.google.com/)
+    *   **Authentication:** For user sign-in and security.
+    *   **Cloud Firestore:** NoSQL database for storing debtors, debts, and payments.
+*   **State Management:** [Provider](https://pub.dev/packages/provider) pattern.
+*   **UI Components:**
+    *   `fl_chart` for statistical graphs.
+    *   `google_fonts` for typography.
+    *   `font_awesome_flutter` for icons.
+*   **Utilities:**
+    *   `shared_preferences` for persisting local settings (Theme, Language).
+    *   `intl` for date and number formatting.
 
-*   **Framework**: [Flutter](https://flutter.dev/) (Dart)
-*   **Backend**: [Firebase](https://firebase.google.com/)
-    *   **Authentication**: `firebase_auth`, `google_sign_in`
-    *   **Database**: `cloud_firestore` (with offline persistence enabled)
-    *   **Storage**: `firebase_storage`
-    *   **Messaging**: `firebase_messaging`
-*   **State Management**: `provider`
-*   **Localization**: `flutter_localizations`, `intl`
-*   **UI & Visualization**:
-    *   `fl_chart`: For rendering statistical charts.
-    *   `percent_indicator`: For progress visualization.
-    *   `font_awesome_flutter` & `simple_icons`: For iconography.
-    *   `google_fonts`: For custom typography.
-*   **Utilities**: `uuid` (unique IDs), `shared_preferences` (local config storage).
+## 📂 Project Structure
 
-## Key Features
+```
+lib/
+├── custom_widgets/      # Reusable UI components (StatCard, TransactionTile, etc.)
+├── firestore_services/  # Logic for Firebase interactions (Auth, Debtors, Payments)
+├── l10n/                # Localization resources (.arb files)
+├── models/              # Data models (Debtor, DebtTransaction, PaymentTransaction)
+├── providers/           # State management classes (DebtorProvider, ThemeProvider, etc.)
+├── screens/             # Application screens (Dashboard, Settings, Details, etc.)
+├── themes/              # Theme configuration (Colors, Text Styles)
+├── firebase_options.dart # Firebase configuration
+└── main.dart            # Application entry point
+```
 
-*   **Authentication**: Secure login via Google and Facebook integration.
-*   **Dashboard**: A central hub displaying quick actions, summary statistics, and recent transactions.
-*   **Debtor Management**:
-    *   Add, edit, and delete debtor profiles.
-    *   Store contact details (Name, Phone, Email).
-    *   Search and filter debtors.
-*   **Transaction Tracking**:
-    *   Record specific debts (Borrowed) and payments (Paid).
-    *   Categorize payments by method (Cash, Bank Transfer, Check, Other).
-    *   View transaction history per debtor.
-*   **Statistics & Analysis**:
-    *   Visual charts for debt distribution and payment trends.
-    *   Metrics for total outstanding debt, total paid, and payment rates.
-*   **Localization**: Full support for **English** and **Arabic** languages.
-*   **Theme Customization**: Built-in **Light** and **Dark** themes.
-*   **Offline Support**: Firestore persistence ensures the app remains functional without an active internet connection.
+## ⚙️ Setup & Installation
 
-## Setup & Usage
+### Prerequisites
+*   Flutter SDK installed.
+*   A Firebase project created and configured.
 
-To run this project locally, ensure you have the Flutter SDK installed.
-
-1.  **Clone the repository**:
+### Installation
+1.  **Clone the repository:**
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/your-username/fatora.git
     cd fatora
     ```
 
-2.  **Install dependencies**:
+2.  **Install dependencies:**
     ```bash
     flutter pub get
     ```
 
-3.  **Firebase Configuration**:
-    *   This project relies on Firebase. You must provide the necessary configuration files:
-        *   **Android**: Place `google-services.json` in `android/app/`.
-        *   **iOS/macOS**: Place `GoogleService-Info.plist` in `ios/Runner/` and `macos/Runner/`.
+3.  **Firebase Configuration:**
+    *   Ensure `firebase_options.dart` is present in `lib/`.
+    *   If not, configure it using the FlutterFire CLI:
+        ```bash
+        flutterfire configure
+        ```
 
-4.  **Run the application**:
+4.  **Run the App:**
     ```bash
     flutter run
     ```
 
-## Notes & Limitations
+## 📝 Usage
 
-*   **Platform Support**: The project is configured for Android, iOS, Windows, macOS, Linux, and Web, though Firebase configuration specifics usually target Mobile/Web primarily.
-*   **Private Package**: The `pubspec.yaml` is configured with `publish_to: 'none'`, indicating this is a private application not intended for public publication on pub.dev.
-*   **Web Persistence**: Firestore persistence settings are explicitly handled for Web and Non-Web platforms in `main.dart`.
+1.  **Authentication:** Sign in using a Google account.
+2.  **Dashboard:** Navigate the main dashboard to see summaries and quick actions.
+3.  **Adding a Debtor:** Use the "Add Debtor" action or navigate to the Debtors list to create a new profile.
+4.  **Recording Transactions:**
+    *   Go to a debtor's details.
+    *   Click "Add Debt" to record a new liability.
+    *   Click "Add Payment" to record a repayment.
+5.  **Settings:** Use the settings screen to toggle Dark Mode or switch between English and Arabic.
+
+## ⚠️ Notes
+
+*   The application relies on Firestore indexes for complex queries. Monitor the debug console for index creation links if queries fail.
+*   Optimistic locking and caching mechanisms are implemented in the service layer to handle data consistency and performance.
+
+## 📄 License
+
+This project is intended for personal or educational use. Please refer to the repository license file for specific terms.

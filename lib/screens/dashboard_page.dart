@@ -1,20 +1,19 @@
-import 'package:fatora/providers/debtor_provider.dart' as debtor_provider;
-import 'package:fatora/providers/payment_provider.dart';
+import 'package:fatora/custom_widgets/custom_widgets.dart';
+import 'package:fatora/models/payment_model.dart';
+import 'package:fatora/providers/debtor_provider.dart';
+import 'package:fatora/providers/theme_provider.dart';
 import 'package:fatora/screens/add_edit_debtor_screen.dart';
 import 'package:fatora/screens/debtors_list_screen.dart';
-import 'package:fatora/screens/statistics_screen.dart';
 import 'package:fatora/screens/settings_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fatora/screens/statistics_screen.dart';
+import 'package:fatora/services/transaction_service.dart';
+import 'package:fatora/themes/theme.dart';
 import 'package:flutter/material.dart';
-
 import 'package:intl/intl.dart';
+import 'package:isar/isar.dart'; // Import Isar for query extensions
+import 'package:provider/provider.dart';
 
 import '../l10n/app_localizations.dart';
-import '../models/payment_model.dart' as debtor_provider;
-import '../themes/theme.dart';
-
-import 'package:fatora/providers/theme_provider.dart';
-import 'package:provider/provider.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -24,7 +23,7 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage>
-    with TickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
   int selectedIndex = 0;
   late AnimationController animationController;
   late Animation<double> fadeAnimation;
@@ -32,6 +31,8 @@ class _DashboardPageState extends State<DashboardPage>
   @override
   void initState() {
     super.initState();
+    
+    // Animation setup
     animationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
@@ -44,6 +45,11 @@ class _DashboardPageState extends State<DashboardPage>
       curve: Curves.easeInOut,
     ));
     animationController.forward();
+
+    // Initial Data Fetch
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<DebtorProvider>().loadDebtors();
+    });
   }
 
   @override
@@ -54,6 +60,8 @@ class _DashboardPageState extends State<DashboardPage>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     final pages = [
       const DashboardContent(),
       const DebtorsListScreen(),
@@ -65,77 +73,84 @@ class _DashboardPageState extends State<DashboardPage>
       body: FadeTransition(
         opacity: fadeAnimation,
         child: SafeArea(
-          child: pages[selectedIndex],
+          child: IndexedStack(
+            index: selectedIndex,
+            children: pages,
+          ),
         ),
       ),
-      bottomNavigationBar: buildBottomNavigationBar(),
-    );
-  }
-
-  Widget buildBottomNavigationBar() {
-    final l10n = AppLocalizations.of(context)!;
-    return NavigationBar(
-      selectedIndex: selectedIndex,
-      onDestinationSelected: (index) {
-        setState(() {
-          selectedIndex = index;
-        });
-      },
-      destinations: [
-        NavigationDestination(
-          icon: const Icon(Icons.dashboard_outlined),
-          selectedIcon: const Icon(Icons.dashboard_outlined),
-          label: l10n.dashboard,
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.people_outlined),
-          selectedIcon: const Icon(Icons.people_outlined),
-          label: l10n.debtors,
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.bar_chart_outlined),
-          selectedIcon: const Icon(Icons.bar_chart_outlined),
-          label: l10n.statistics,
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.settings_outlined),
-          selectedIcon: const Icon(Icons.settings_outlined),
-          label: l10n.settings,
-        ),
-      ],
-    );
-}
-}
-
-class DashboardContent extends StatelessWidget {
-  const DashboardContent({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildHeader(context),
-          const SizedBox(height: 24),
-          _buildStatsGrid(context),
-          const SizedBox(height: 24),
-          _buildQuickActions(context),
-          const SizedBox(height: 24),
-          _buildRecentTransactions(context),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: selectedIndex,
+        onDestinationSelected: (index) {
+          setState(() {
+            selectedIndex = index;
+          });
+        },
+        destinations: [
+          NavigationDestination(
+            icon: const Icon(Icons.dashboard_outlined),
+            selectedIcon: const Icon(Icons.dashboard),
+            label: l10n.dashboard,
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.people_outlined),
+            selectedIcon: const Icon(Icons.people),
+            label: l10n.debtors,
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.bar_chart_outlined),
+            selectedIcon: const Icon(Icons.bar_chart),
+            label: l10n.statistics,
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.settings_outlined),
+            selectedIcon: const Icon(Icons.settings),
+            label: l10n.settings,
+          ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildHeader(BuildContext context) {
+class DashboardContent extends StatelessWidget {
+  const DashboardContent({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return RefreshIndicator(
+      onRefresh: () async {
+        await context.read<DebtorProvider>().loadDebtors();
+        // Since recent transactions are in a FutureBuilder, triggering setState via a parent or key would be needed to refresh them.
+        // For now, re-fetching debtors is the primary action.
+      },
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const DashboardHeader(),
+            const SizedBox(height: 24),
+            const DashboardStatsGrid(),
+            const SizedBox(height: 24),
+            const DashboardQuickActions(),
+            const SizedBox(height: 24),
+            const RecentTransactionsList(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class DashboardHeader extends StatelessWidget {
+  const DashboardHeader({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final user = FirebaseAuth.instance.currentUser;
     final l10n = AppLocalizations.of(context)!;
-
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = theme.brightness == Brightness.dark;
 
@@ -160,15 +175,8 @@ class DashboardContent extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '${l10n.hello}, ${user?.displayName ?? 'User'}',
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: theme.colorScheme.onSurface,
-                ),
-              ),
-              Text(
                 l10n.welcomeBack,
-                style: theme.textTheme.bodyMedium?.copyWith(
+                style: theme.textTheme.titleLarge?.copyWith(
                   color: theme.colorScheme.secondary,
                 ),
               ),
@@ -183,7 +191,7 @@ class DashboardContent extends StatelessWidget {
           icon: AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
             child: Icon(
-              isDarkMode ? Icons.light_mode_rounded: Icons.dark_mode_rounded,
+              isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
               key: ValueKey(isDarkMode),
               color: theme.colorScheme.onSurface,
             ),
@@ -192,21 +200,18 @@ class DashboardContent extends StatelessWidget {
       ],
     );
   }
+}
 
-  Widget _buildStatsGrid(BuildContext context) {
-    final debtorProvider = debtor_provider.DebtorProvider();
+class DashboardStatsGrid extends StatelessWidget {
+  const DashboardStatsGrid({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return StreamBuilder<debtor_provider.GeneralStatistics>(
-      stream: debtorProvider.getGeneralStatisticsStream(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError || !snapshot.hasData) {
-          return Center(child: Text(l10n.couldNotLoadStats));
-        }
-        final stats = snapshot.data!;
+    return Selector<DebtorProvider, GeneralStatistics>(
+      selector: (_, provider) => provider.statistics,
+      builder: (context, stats, child) {
         final statsData = [
           {
             'title': l10n.totalDebtors,
@@ -222,13 +227,13 @@ class DashboardContent extends StatelessWidget {
           },
           {
             'title': l10n.totalDebt,
-            'value': stats.totalCurrentDebt.toString(),
+            'value': NumberFormat.currency(symbol: '').format(stats.totalCurrentDebt),
             'icon': Icons.account_balance_wallet,
             'color': AppThemes.warningColor,
           },
           {
             'title': l10n.totalPaid,
-            'value': stats.totalPaid.toString(),
+            'value': NumberFormat.currency(symbol: '').format(stats.totalPaid),
             'icon': Icons.payment,
             'color': AppThemes.debtColor,
           },
@@ -246,10 +251,9 @@ class DashboardContent extends StatelessWidget {
           itemCount: statsData.length,
           itemBuilder: (context, index) {
             final stat = statsData[index];
-            return _buildStatCard(
-              context,
-              title: stat['title']?.toString() ?? '',
-              value: stat['value']?.toString() ?? '',
+            return StatCard(
+              title: stat['title'] as String,
+              value: stat['value'] as String,
               icon: stat['icon'] as IconData,
               color: stat['color'] as Color,
             );
@@ -258,15 +262,27 @@ class DashboardContent extends StatelessWidget {
       },
     );
   }
+}
 
-  Widget _buildStatCard(BuildContext context, {
-    required String title,
-    required String value,
-    required IconData icon,
-    required Color color,
-  }) {
+class StatCard extends StatelessWidget {
+  final String title;
+  final String value;
+  final IconData icon;
+  final Color color;
+
+  const StatCard({
+    super.key,
+    required this.title,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
+
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
@@ -289,22 +305,14 @@ class DashboardContent extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Icon(
-                icon,
-                color: color,
-                size: 24,
-              ),
+              Icon(icon, color: color, size: 24),
               Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
-                  Icons.trending_up,
-                  color: color,
-                  size: 16,
-                ),
+                child: Icon(Icons.trending_up, color: color, size: 16),
               ),
             ],
           ),
@@ -315,8 +323,11 @@ class DashboardContent extends StatelessWidget {
                 value,
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
+                  fontSize: 18, 
                   color: theme.colorScheme.onSurface,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
               Text(
                 title,
@@ -330,10 +341,16 @@ class DashboardContent extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildQuickActions(BuildContext context) {
+class DashboardQuickActions extends StatelessWidget {
+  const DashboardQuickActions({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -352,10 +369,14 @@ class DashboardContent extends StatelessWidget {
                 context,
                 l10n.addDebtor,
                 Icons.person_add,
-                Colors.blue,
-                    () {
-                  Navigator.push(context, MaterialPageRoute(
-                      builder: (context) => const AddEditDebtorScreen()));
+                AppThemes.primaryColor,
+                () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const AddEditDebtorScreen()),
+                  ).then((_) {
+                    context.read<DebtorProvider>().loadDebtors();
+                  });
                 },
               ),
             ),
@@ -365,11 +386,13 @@ class DashboardContent extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickActionButton(BuildContext context,
-      String title,
-      IconData icon,
-      Color color,
-      VoidCallback onTap,) {
+  Widget _buildQuickActionButton(
+    BuildContext context,
+    String title,
+    IconData icon,
+    Color color,
+    VoidCallback onTap,
+  ) {
     final theme = Theme.of(context);
     return Material(
       color: Colors.transparent,
@@ -388,11 +411,7 @@ class DashboardContent extends StatelessWidget {
           ),
           child: Column(
             children: [
-              Icon(
-                icon,
-                color: color,
-                size: 24,
-              ),
+              Icon(icon, color: color, size: 24),
               const SizedBox(height: 8),
               Text(
                 title,
@@ -408,11 +427,17 @@ class DashboardContent extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildRecentTransactions(BuildContext context) {
+class RecentTransactionsList extends StatelessWidget {
+  const RecentTransactionsList({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final isDarkMode = theme.brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -453,8 +478,8 @@ class DashboardContent extends StatelessWidget {
               ),
             ],
           ),
-          child: FutureBuilder<List<SystemPayment>>(
-            future: PaymentProvider().getRecentSystemPayments(limit: 5),
+          child: FutureBuilder<List<PaymentTransaction>>(
+            future: _fetchRecentPayments(), 
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Padding(
@@ -462,12 +487,13 @@ class DashboardContent extends StatelessWidget {
                   child: Center(child: CircularProgressIndicator()),
                 );
               }
-              if (snapshot.hasError || !snapshot.hasData) {
+              if (snapshot.hasError) {
                 return Padding(
                   padding: const EdgeInsets.all(32.0),
                   child: Center(child: Text(l10n.couldNotLoadTransactions)),
                 );
               }
+              
               final transactions = snapshot.data ?? [];
 
               if (transactions.isEmpty) {
@@ -489,14 +515,13 @@ class DashboardContent extends StatelessWidget {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: transactions.length,
-                separatorBuilder: (context, index) =>
-                    Divider(
-                      color: theme.colorScheme.secondary.withOpacity(0.2),
-                      height: 1,
-                    ),
+                separatorBuilder: (context, index) => Divider(
+                  color: theme.colorScheme.secondary.withOpacity(0.2),
+                  height: 1,
+                ),
                 itemBuilder: (context, index) {
-                  final transaction = transactions[index];
-                  return _buildTransactionItem(context, transaction);
+                  final payment = transactions[index];
+                  return _TransactionItem(payment: payment);
                 },
               );
             },
@@ -506,11 +531,36 @@ class DashboardContent extends StatelessWidget {
     );
   }
 
-  Widget _buildTransactionItem(BuildContext context,
-      SystemPayment transaction) {
+  Future<List<PaymentTransaction>> _fetchRecentPayments() async {
+    final service = TransactionService();
+    final isar = await service.db;
+    
+    // Correct Isar 3.x syntax: where -> sort -> limit -> findAll
+    final payments = await isar.paymentTransactions
+        .where()
+        .sortByCreatedAtDesc()
+        .limit(5)
+        .findAll();
+        
+    for (var p in payments) {
+      await p.debtor.load();
+    }
+    
+    return payments;
+  }
+}
+
+class _TransactionItem extends StatelessWidget {
+  final PaymentTransaction payment;
+
+  const _TransactionItem({required this.payment});
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    const color = Colors.green; // Payments are always green
+    const color = AppThemes.paymentColor;
     const icon = Icons.arrow_downward;
+    final debtorName = payment.debtor.value?.name ?? 'Unknown';
 
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -521,31 +571,25 @@ class DashboardContent extends StatelessWidget {
           color: color.withOpacity(0.1),
           borderRadius: BorderRadius.circular(20),
         ),
-        child: Icon(
-          icon,
-          color: color,
-          size: 20,
-        ),
+        child: const Icon(icon, color: color, size: 20),
       ),
       title: Text(
-        transaction.debtorName,
+        debtorName,
         style: TextStyle(
           fontWeight: FontWeight.w500,
           color: theme.colorScheme.onSurface,
         ),
       ),
       subtitle: Text(
-        DateFormat.yMMMd().format(transaction.payment.createdAt),
-        // Should be formatted
+        DateFormat.yMMMd().format(payment.createdAt),
         style: TextStyle(
           color: theme.colorScheme.secondary,
           fontSize: 12,
         ),
       ),
       trailing: Text(
-        NumberFormat.currency(symbol: '').format(transaction.payment.amount),
-        // Should be formatted
-        style: TextStyle(
+        NumberFormat.currency(symbol: '').format(payment.amount),
+        style: const TextStyle(
           fontWeight: FontWeight.w600,
           color: color,
           fontSize: 14,

@@ -1,3 +1,5 @@
+import com.android.build.gradle.LibraryExtension
+
 plugins {
     id("com.android.application") version "8.7.0" apply false
     id("org.jetbrains.kotlin.android") version "2.1.0" apply false
@@ -24,4 +26,14 @@ subprojects {
 
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
+}
+
+subprojects {
+    if (name == "isar_flutter_libs") {
+        afterEvaluate {
+            extensions.configure<LibraryExtension> {
+                namespace = "dev.isar.isar_flutter_libs"
+            }
+        }
+    }
 }

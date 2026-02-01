@@ -259,6 +259,19 @@ class AppThemes {
       ),
     ),
 
+    // NavigationBar Theme (M3)
+    navigationBarTheme: NavigationBarThemeData(
+      backgroundColor: lightColorScheme.surface,
+      indicatorColor: lightColorScheme.primary,
+      iconTheme: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return IconThemeData(color: lightColorScheme.onPrimary);
+        }
+        return IconThemeData(color: lightColorScheme.onSurface);
+      }),
+    ),
+
+    // BottomNavigationBar Theme (M2 Legacy support)
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: lightColorScheme.surface,
       selectedItemColor: lightColorScheme.onSecondary,
@@ -423,6 +436,19 @@ class AppThemes {
       ),
     ),
 
+    // NavigationBar Theme (M3)
+    navigationBarTheme: NavigationBarThemeData(
+      backgroundColor: darkColorScheme.surface,
+      indicatorColor: darkColorScheme.primary,
+      iconTheme: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return IconThemeData(color: darkColorScheme.onPrimary);
+        }
+        return IconThemeData(color: darkColorScheme.onSurface);
+      }),
+    ),
+
+    // BottomNavigationBar Theme (M2 Legacy support)
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: darkColorScheme.surface,
       selectedItemColor: Colors.yellow,

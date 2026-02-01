@@ -40,12 +40,12 @@ class DebtDetailsScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: AppThemes.spacing24),
-                if (debt.notes.isNotEmpty)
+                if (debt.notes?.isNotEmpty ?? false)
                   _buildDetailRow(
                     theme,
                     icon: Icons.description_outlined,
                     label: l10n.description,
-                    value: debt.notes,
+                    value: debt.notes ?? '',
                   ),
                 const SizedBox(height: AppThemes.spacing16),
                 _buildDetailRow(
