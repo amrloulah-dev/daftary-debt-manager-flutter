@@ -1,0 +1,33 @@
+# Fatora - Project Summary
+
+## Project Overview
+**Fatora** is a digital ledger application designed to help individuals and small businesses efficiently manage debts, credits, and payments. It serves as a modern replacement for traditional paper notebooks, allowing users to keep accurate track of money owed to them by customers, friends, or other contacts.
+
+## The Problem It Solves
+Keeping track of informal loans and credit sales on paper can be disorganized, leading to calculation errors, lost records, and forgotten debts. Fatora solves this by providing a structured, secure, and automated way to record every financial interaction.
+
+## Who Is It For?
+- **Small Business Owners:** Shopkeepers, freelancers, and service providers who offer credit to their clients.
+- **Individuals:** Anyone who lends money to personal contacts and needs a reliable way to track repayment.
+
+## Key Features
+- **Debtor Management:** Users can create profiles for people who owe money, storing their contact details (name, phone, email) for easy communication.
+- **Transaction Tracking:** The app records two main types of actions:
+    - **Debts:** Detailed records of items or services provided on credit, including prices and quantities.
+    - **Payments:** Records of money received, allowing for partial or full repayment tracking.
+- **Financial Dashboard:** A main overview screen displays critical financial health metrics, such as:
+    - Total money currently owed (Outstanding Debt).
+    - Total money collected (Total Paid).
+    - Number of active debtors.
+- **Smart Analytics:**
+    - **Risk Assessment:** Automatically categorizes debtors by risk level (e.g., Low, Medium, High) based on how much they owe.
+    - **Status Tracking:** Identifies who is active, inactive, or fully paid off.
+- **Search & Organization:** Users can easily find debtors by name or phone number and sort lists by debt amount or last payment date.
+- **Cloud Security:** Data is synchronized securely online, ensuring records are safe even if the device is lost.
+- **Accessibility:** The application supports both English and Arabic languages and offers Light and Dark visual themes.
+
+## Value to the User
+Fatora provides peace of mind and financial clarity. By automating calculations and organizing data, it helps users:
+- **Save Time:** Eliminates manual math and searching through pages.
+- **Reduce Losses:** Helps ensure no debt is forgotten or lost.
+- **Improve Cash Flow:** clear visibility on who owes money encourages timely follow-ups.
