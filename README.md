@@ -92,4 +92,4 @@ dart run build_runner build --delete-conflicting-outputs
 <div align="center">
 Developed with ❤️ by <a href="https://github.com/amrloulah-dev">Amr Loulah</a>
 </div>
-```
+
