@@ -94,8 +94,7 @@ class CustomCard extends StatelessWidget {
 class StatisticCard extends StatelessWidget {
   final String title;
   final String value;
-  final IconData icon;
-  final Color color;
+  final IconData icon;  final Color color;
   final String? subtitle;
 
   const StatisticCard({
