@@ -9,7 +9,7 @@ plugins {
 
 android {
     namespace = "com.example.fatora"
-    compileSdk = 34
+    compileSdk = 36
     ndkVersion = "27.0.12077973"
 
     compileOptions {
@@ -24,7 +24,7 @@ android {
     defaultConfig {
         applicationId = "com.example.fatora"
         minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }

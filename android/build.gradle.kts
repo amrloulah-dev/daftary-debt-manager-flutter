@@ -29,10 +29,17 @@ tasks.register<Delete>("clean") {
 }
 
 subprojects {
+    project.pluginManager.withPlugin("com.android.library") {
+        project.extensions.configure<LibraryExtension> {
+            compileSdk = 36
+        }
+    }
+
     if (name == "isar_flutter_libs") {
         afterEvaluate {
             extensions.configure<LibraryExtension> {
                 namespace = "dev.isar.isar_flutter_libs"
+                compileSdk = 36
             }
         }
     }
