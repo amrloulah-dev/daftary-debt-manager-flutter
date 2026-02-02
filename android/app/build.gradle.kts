@@ -23,8 +23,8 @@ android {
 
     defaultConfig {
         applicationId = "com.example.fatora"
-        minSdk = 21
-        targetSdk = 34
+        minSdk = flutter.minSdkVersion
+        targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
