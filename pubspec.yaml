@@ -1,5 +1,5 @@
 name: fatora
-description: "A new Flutter project."
+description: "Daftary - A smart digital ledger for managing debts and payments."
 publish_to: 'none'
 
 version: 1.0.0+1
@@ -32,17 +32,24 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: ^0.13.1
+  flutter_launcher_icons: ^0.14.4
   flutter_lints: ^5.0.0
   
   # Code Generation
   isar_generator: 3.1.0+1
   build_runner: ^2.4.0
+  flutter_native_splash: ^2.4.7
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: "assets/native screen.png"
+  android: true
+  ios: true
 
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/icon.png"
+  image_path: "assets/iconapp.png"
 
 flutter:
   generate: true

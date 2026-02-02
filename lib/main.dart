@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     return MaterialApp(
-      title: 'Fatora',
+      title: 'Daftary',
       debugShowCheckedModeBanner: false,
       
       // Theme Configuration
